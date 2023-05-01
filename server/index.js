@@ -3,17 +3,12 @@ const express = require('express')
 const app = express()
 const port = process.env.port || 3001
 const mongodb = require('./db.js')
+const cors = require('cors')
+
 mongodb();
 
 
-app.use((req,res,next) => {
-  res.setHeader("Access-Control-Allow-Origin","htps://zwigato-be.onrender.com")
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  )
-  next()
-})
+app.use(cors())
 
 app.get('/', (req, res) => {
   res.json({success: true})
