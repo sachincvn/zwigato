@@ -21,6 +21,7 @@ app.get('/', (req, res) => {
 
 app.use(express.json())
 app.use("/api",require("./routes/User.js"))
+app.use("/api",require("./routes/DisplayItems.js"))
 
 app.listen(port, () => {
   console.log(`listening on port ${port}`)

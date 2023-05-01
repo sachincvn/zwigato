@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const { body, validationResult } = require("express-validator");
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const jwtSecret = "endpZ2F0bw=="
 
 //create user
 router.post(
@@ -23,11 +26,13 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
+    const salt = await bcrypt.genSalt(10)
+    let secPassword = await bcrypt.hash(req.body.password,salt);
     try {
       await User.create({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        password: req.body.password,
+        password: secPassword,
         email: req.body.email,
         location: req.body.location,
         city: req.body.city,
@@ -44,7 +49,7 @@ router.post(
 router.post("/login", async (req, res) => {
   try {
 
-    if(!req.body.email){
+    if(!req.body.email || !req.body.password){
       return res.status(400).json({ errors: "Invalid credentials " });
     }
     
@@ -53,15 +58,24 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ errors: "Invalid credentials " });
     }
 
-    if(!req.body.password === userData.password){
+    const isValidPassword = await bcrypt.compare(req.body.password,userData.password)
+    if(!isValidPassword){
       return res.status(400).json({ errors: "Invalid credentials " });
     }
 
-    res.json({ success: true });
+    const data = {
+      user:{
+        id: userData.id
+      }
+    }
+
+    const authToken = jwt.sign(data,jwtSecret);
+
+    res.json({ success: true, authToken : authToken  });
   
   } catch (error) {
     console.log(error);
-    res.json({ success: false });
+    res.json({ success: false});
   }
 });
 

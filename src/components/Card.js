@@ -1,17 +1,19 @@
 import React from "react";
 
-export default function Card() {
+export default function Card(props) {
+
+  let options = props.options;
+  let priceOption = Object.keys(options);
+
   return (
     <>
       <div className="col-md-4">
         <div className="card mb-4 shadow-sm">
-        <img src="https://source.unsplash.com/random/?food,pizza,burger,snacks" style={{"width":"100%","height" : "225px"}} class="card-img-top" alt="Food"/>
+        <img src={props.imgSrc} style={{"width":"100%","height" : "225px"}} className="card-img-top" alt="Food"/>
           <div className="card-body">
-            <h5 class="card-title">Card title</h5>
+            <h5 className="card-title">{props.foodName}</h5>
             <p className="card-text">
-              This is a wider card with supporting text below as a natural
-              lead-in to additional content. This content is a little bit
-              longer.
+             {props.description}
             </p>
             <div className="d-flex justify-content-between align-items-center">
               <div className="btn-group">
@@ -25,11 +27,14 @@ export default function Card() {
                   })}
                 </select>
                 <select className="btn btn-sm btn-outline-secondary rounded">
-                  <option value="half">Half</option>
-                  <option value="full">Full</option>
+                  {
+                    priceOption.map((data) => {
+                      return <option key={data} value={data}>{data}</option>
+                    })
+                  }
                 </select>
               </div>
-              <large className="text-bold">Price :$10 </large>
+              <p className="text-bold">Price :$10 </p>
             </div>
           </div>
         </div>
