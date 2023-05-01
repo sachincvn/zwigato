@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import {BASE_URL} from '../common/Helper';
 
 export default function Signup() {
   const [credentials, setCredentials] = useState({
@@ -16,7 +17,7 @@ export default function Signup() {
   const handelSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:3001/api/createuser", {
+    const response = await fetch(`${BASE_URL}/api/createuser`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
