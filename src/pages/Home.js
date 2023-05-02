@@ -7,9 +7,10 @@ import { BASE_URL } from "../common/Helper";
 export default function Home() {
   const [foodCategory, setFoodCategory] = useState([]);
   const [foodItems, setFoodItems] = useState([]);
-
+  const [loading, setloading] = useState(false);
   const loadData = async () => {
     try {
+      setloading(true);
       let response = await fetch(`${BASE_URL}/api/foodItems`, {
         method: "GET",
         headers: {
@@ -21,6 +22,8 @@ export default function Home() {
       setFoodCategory(response[1]);
     } catch (error) {
       console.log(error);
+    } finally {
+      setloading(false);
     }
   };
 
@@ -35,11 +38,10 @@ export default function Home() {
         <div className="container">
           <h1 className="jumbotron-heading">Zwigato Order Now</h1>
           <p className="lead text-muted">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi
-            consectetur, inventore dolorum incidunt excepturi asperiores
-            praesentium repellat ex autem omnis tempore, voluptatibus officiis
-            saepe similique modi maxime aliquam, suscipit optio. Lorem ipsum
-            dolor sit amet consectetur adipisicing elit. Fugit maiores totam at.
+            My MERN Stack Project 'Zwigato' for food Order, created using
+            Mongoo, React, Express and Node JS. Lorem ipsum dolor sit amet
+            consectetur adipisicing elit. Delectus maxime totam quod unde
+            praesentium fuga modi enim amet nihil eius!
           </p>
           <div className="input-group mb-3">
             <input
@@ -60,9 +62,20 @@ export default function Home() {
         </div>
       </section>
 
+      {loading ? (
+        <>
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+        </>
+      ) : (
+        ""
+      )}
+
       <div className="album py-5 bg-light">
         <div className="container">
-          
           {foodCategory !== []
             ? foodCategory.map((data) => {
                 return (
@@ -78,7 +91,10 @@ export default function Home() {
                             )
                             .map((foodItem) => {
                               return (
-                                  <Card foodName={foodItem.name} description={foodItem.description} options={foodItem.options[0]} imgSrc={foodItem.img} ></Card>
+                                <Card
+                                  foodItem={foodItem}
+                                  options={foodItem.options[0]}
+                                ></Card>
                               );
                             })}
                         </>
@@ -92,6 +108,7 @@ export default function Home() {
             : ""}
         </div>
       </div>
+
       <div>
         <Footer />
       </div>

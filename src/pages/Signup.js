@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import {BASE_URL} from '../common/Helper';
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
+  let navigate = useNavigate()
   const [credentials, setCredentials] = useState({
     firstName: "",
     lastName: "",
@@ -14,29 +16,45 @@ export default function Signup() {
     userZip: "",
   });
 
+  const [loading, setloading] = useState(false);
+
   const handelSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch(`${BASE_URL}/api/createuser`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        firstName: credentials.firstName,
-        lastName: credentials.lastName,
-        password: credentials.userPassword,
-        email: credentials.userEmail,
-        location: credentials.userAddress,
-        city: credentials.userCity,
-        postalCode: credentials.userZip,
-      }),
-    });
+    try {
+      setloading(true);
 
-    const json = await response.json();
-    console.log(json);
-    if (!json.success) {
-        alert("Enter valid credentials")
+      const response = await fetch(`${BASE_URL}/api/createuser`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: credentials.firstName,
+          lastName: credentials.lastName,
+          password: credentials.userPassword,
+          email: credentials.userEmail,
+          location: credentials.userAddress,
+          city: credentials.userCity,
+          postalCode: credentials.userZip,
+        }),
+      });
+  
+      const json = await response.json();
+      console.log(json);
+      if (!json.success) {
+      setloading(false);
+          alert("Enter valid credentials")
+      }
+      if(json.success){
+      setloading(false);
+        navigate('/login');
+      }
+    } catch (error) {
+      
+    }
+    finally{
+      setloading(false);
     }
   };
 
@@ -143,7 +161,18 @@ export default function Signup() {
             </div>
           </div>
           <button type="submit" className="btn btn-primary">
-            Sign Up
+          {loading ? (
+              <>
+                <span
+                  class="spinner-grow spinner-grow-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                Creating account
+              </>
+            ) : (
+              <>Sign up</>
+            )}
           </button>
         </div>
       </form>

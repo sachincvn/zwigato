@@ -5,36 +5,45 @@ import { BASE_URL } from "../common/Helper";
 import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
-
   const [credentials, setCredentials] = useState({
     userEmail: "",
     userPassword: "",
   });
+  const [loading, setloading] = useState(false);
 
   let navigate = useNavigate();
 
   const handelSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(`${BASE_URL}/api/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        password: credentials.userPassword,
-        email: credentials.userEmail,
-      }),
-    });
+    try {
+      setloading(true);
+      const response = await fetch(`${BASE_URL}/api/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: credentials.userPassword,
+          email: credentials.userEmail,
+        }),
+      });
 
-    const json = await response.json();
-    console.log(json);
-    if (!json.success) {
-        alert("Invalid credentials")
-    }
+      const json = await response.json();
+      console.log(json);
+      if (!json.success) {
+        setloading(false);
+        alert("Invalid credentials");
+      }
 
-    if (json.success) {
-      localStorage.setItem("authToken",json.authToken)
-      navigate('/')
+      if (json.success) {
+        setloading(false);
+        localStorage.setItem("authToken", json.authToken);
+        navigate("/");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setloading(false);
     }
   };
 
@@ -45,7 +54,7 @@ export const Login = () => {
   return (
     <>
       <Navbar />
-      <div  className="jumbotron">
+      <div className="jumbotron">
         <form className="container" onSubmit={handelSubmit}>
           <div class="form-group">
             <label htmlFor="userEmail">Email address</label>
@@ -75,14 +84,25 @@ export const Login = () => {
               placeholder="Password"
             />
           </div>
-        
+
           <button type="submit" class="btn btn-primary">
-            Submit
+            {loading ? (
+              <>
+                <span
+                  class="spinner-grow spinner-grow-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                Logging in...
+              </>
+            ) : (
+              <>Login</>
+            )}
           </button>
         </form>
       </div>
 
-      <Footer/>
+      <Footer />
     </>
   );
 };
