@@ -1,13 +1,13 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useCart, useDispatchCart } from "../components/ContextReducer";
+import { useCart  } from "../components/ContextReducer";
 
 export const MyCart = () => {
   let data = useCart();
-  let dispatch = useDispatchCart();
+//   let dispatch = useDispatchCart();
 
-  let totalPrice = data.reduce((total, food) => total + food.price, 0);
+//   let totalPrice = data.reduce((total, food) => total + food.price, 0);
   return (
     <>
       <Navbar />
@@ -32,13 +32,15 @@ export const MyCart = () => {
                 </thead>
                 <tbody>
                   {data.map((food, index) => {
-                    <tr>
+                    return(
+                        <tr>
                       <th scope="row">{index + 1}</th>
                       <td>{food.name}</td>
                       <td>{food.qty}</td>
                       <td>{food.size}</td>
                       <td>{food.price}</td>
-                    </tr>;
+                    </tr>
+                    )
                   })}
                 </tbody>
               </table>
